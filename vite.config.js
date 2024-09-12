@@ -4,10 +4,11 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 
-// Determine the base URL dynamically based on the environment
-const base = process.env.NODE_ENV === 'production'
-    ? '/wp-content/plugins/wpplug/' // Replace 'your-plugin-folder' with your actual plugin directory name
-    : '/';
+// Define the base URL depending on the environment
+const base =
+    process.env.NODE_ENV === 'production'
+        ? window.pluginData?.baseUrl || '/wp-content/plugins/wp-vue-plugin-template/' // Use the dynamic base URL if available
+        : '/';
 // https://vitejs.dev/config/
 
 const inputs = [

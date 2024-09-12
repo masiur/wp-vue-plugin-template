@@ -48,6 +48,11 @@ class EnqueueScripts {
                 return $tag;
             }, 10, 2);
         }
+
+        // Pass the plugin directory URL dynamically to JavaScript
+        wp_localize_script('vite-dev-script', 'pluginData', [
+            'baseUrl' => plugin_dir_url(__FILE__), // Dynamically pass the base URL
+        ]);
     }
 }
 
