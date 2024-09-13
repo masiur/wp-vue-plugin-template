@@ -34,7 +34,7 @@ export default {
     data() {
         return {
             userInput: '', // User input from the form
-            messages: [], // Array to store messages for display
+            messages: JSON.parse(localStorage.getItem('chatMessages')) || [], // Load messages from localStorage or initialize an empty array
         };
     },
     methods: {
@@ -43,6 +43,12 @@ export default {
 
             // Add the user's message to the messages array
             this.messages.push({ id: Date.now(), role: 'user', content: this.userInput });
+
+            // Save messages to localStorage
+            this.saveMessagesToLocalStorage();
+
+            // Clear the user input
+            this.userInput = '';
 
             try {
                 // Make the fetch request to the localized AJAX URL
@@ -68,8 +74,9 @@ export default {
                 // Add the AI's response to the messages array
                 this.messages.push({ id: Date.now() + 1, role: 'ai', content: aiResponse });
 
-                // Clear the user input
-                this.userInput = '';
+                // Save messages to localStorage
+                this.saveMessagesToLocalStorage();
+
 
                 // Auto-scroll to the bottom of the chat
                 this.scrollToBottom();
@@ -78,9 +85,17 @@ export default {
             }
         },
 
+        // Save messages to localStorage
+        saveMessagesToLocalStorage() {
+            localStorage.setItem('chatMessages', JSON.stringify(this.messages));
+        },
+
         // Format the AI response content as HTML for better readability
         formatAIResponse(content) {
             let formattedContent = content;
+
+            // Replace code blocks (```...```) with <pre><code> tags
+            formattedContent = formattedContent.replace(/```([\s\S]*?)```/g, '<pre><code class="code-block">$1</code></pre>');
 
             // Replace headings (##) with <h2> tags
             formattedContent = formattedContent.replace(/## (.+)/g, '<h2>$1</h2>');
@@ -105,13 +120,19 @@ export default {
             });
         }
     },
+    mounted() {
+        // Auto-scroll to bottom when the component is mounted
+        this.scrollToBottom();
+    },
     updated() {
-        this.scrollToBottom(); // Ensure auto-scroll on every update
+        // Ensure auto-scroll on every update
+        this.scrollToBottom();
     }
 };
 </script>
 
 <style scoped>
+
 .chat-container {
     max-width: 800px; /* Increase the width for better layout */
     margin: 0 auto;
@@ -124,7 +145,7 @@ export default {
 }
 
 .chat-box {
-    max-height: 400px; /* Increase the height for better visibility */
+    max-height: 500px; /* Increase the height for better visibility */
     overflow-y: auto;
     margin-bottom: 20px;
     padding: 10px;
@@ -174,6 +195,29 @@ export default {
     margin-bottom: 5px;
 }
 
+.message-content pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 13px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #444;
+}
+
+.message-content code {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 13px;
+}
+
 .chat-form {
     display: flex;
     margin-top: 10px;
@@ -201,4 +245,30 @@ export default {
 .chat-form button:hover {
     background-color: #0056b3;
 }
+
+</style>
+
+<style>
+
+
+/* Enhanced Code Block Styling */
+.code-block {
+    display: flex;
+    background-color: #2d2d2d; /* Dark background for better contrast */
+    color: #f8f8f2; /* Light text color for readability */
+    padding: 5px; /* Increased padding for more space around code */
+    border-radius: 6px; /* Rounded corners for a modern look */
+    overflow-x: auto; /* Enable horizontal scrolling for long lines */
+    font-family: 'Fira Code', 'Courier New', Courier, monospace; /* Monospaced font for code */
+    font-size: 13px; /* Slightly smaller font size for code */
+    border: 1px solid #444; /* Subtle border to define the code area */
+    line-height: 1.5; /* Improved line height for better readability */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+    white-space: pre-wrap; /* Preserve whitespace and wrap text properly */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-width: 100%; /* Prevent overflow */
+}
+
+
 </style>

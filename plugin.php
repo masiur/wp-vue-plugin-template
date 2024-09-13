@@ -68,6 +68,5 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-
 // Initialize the plugin by instantiating the Bootstrap class
 new WPVuePlugin\Bootstrap();

@@ -17,7 +17,15 @@ class AIHandler {
 
             // Replace with the correct Google Generative Language API URL
             // Set up the API endpoint and key
-            $api_key = ''; // Replace with your actual Google API key
+            // Get API key from environment variables
+            $api_key = $_ENV['GEMINI_API_KEY'] ?: ''; // Default to empty string if not set
+
+            if (empty($api_key)) {
+                http_response_code(500);
+                echo json_encode(['error' => 'API key is not set in the environment variables.']);
+                return;
+            }
+
             $api_url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . $api_key;
 
             curl_setopt($ch, CURLOPT_URL, $api_url);
