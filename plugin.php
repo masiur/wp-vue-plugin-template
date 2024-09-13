@@ -59,5 +59,15 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Load Composer's autoload file
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Dotenv\Dotenv;
+
+// Load .env file
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+
 // Initialize the plugin by instantiating the Bootstrap class
 new WPVuePlugin\Bootstrap();
