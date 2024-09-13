@@ -2,3 +2,4 @@
 node_modules
 
 # Logs
+composer.lock

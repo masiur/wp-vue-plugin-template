@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
+import AIView from '../views/AIView.vue';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -15,7 +16,12 @@ const router = createRouter({
       name: 'about',
       // route level code-splitting
       component: AboutView
-    }
+    },
+    {
+      path: '/ai',
+      name: 'ai',
+      component: AIView, // Add the AI route
+    },
   ]
 })
 

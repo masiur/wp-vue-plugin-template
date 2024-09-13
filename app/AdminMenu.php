@@ -23,10 +23,10 @@ class AdminMenu {
      */
     public function render_menu_page() {
         // Development or production environment detection
-        $is_debug = defined('WP_DEBUG') && WP_DEBUG;
-
-        header("Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5170;");
-        // Render the Vue.js app container and load scripts dynamically
+//        $is_debug = defined('WP_DEBUG') && WP_DEBUG;
+//
+//        header("Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5170;");
+//        // Render the Vue.js app container and load scripts dynamically
         echo '<div id="app"></div>';
 
     }

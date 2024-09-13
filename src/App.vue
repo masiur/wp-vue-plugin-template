@@ -11,11 +11,11 @@ import HelloWorld from './components/HelloWorld.vue';
         <div class="wrapper">
             <!-- Custom Component -->
             <HelloWorld msg="You did it!" />
-<h1>kldfjgldkf</h1>
             <!-- Navigation Menu -->
             <nav>
                 <RouterLink to="/" active-class="router-link-exact-active">Home</RouterLink>
                 <RouterLink to="/about" active-class="router-link-exact-active">About</RouterLink>
+                <RouterLink to="/ai" active-class="router-link-exact-active">AI</RouterLink>
             </nav>
         </div>
     </header>

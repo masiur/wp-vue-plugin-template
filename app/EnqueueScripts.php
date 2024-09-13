@@ -52,7 +52,10 @@ class EnqueueScripts {
         // Pass the plugin directory URL dynamically to JavaScript
         wp_localize_script('vite-dev-script', 'pluginData', [
             'baseUrl' => plugin_dir_url(__FILE__), // Dynamically pass the base URL
+            'ajaxUrl' => admin_url('admin-ajax.php'), // WordPress AJAX URL
+            'aiHandlerUrl' => plugin_dir_url(__FILE__) . 'handle-ai-request.php', // Dynamic PHP handler URL
         ]);
+
     }
 }
 
