@@ -16,6 +16,7 @@ import HelloWorld from './components/HelloWorld.vue';
                 <RouterLink to="/" active-class="router-link-exact-active">Home</RouterLink>
                 <RouterLink to="/about" active-class="router-link-exact-active">About</RouterLink>
                 <RouterLink to="/ai" active-class="router-link-exact-active">AI</RouterLink>
+                <RouterLink to="/openai" active-class="router-link-exact-active">OpenAI</RouterLink>
             </nav>
         </div>
     </header>

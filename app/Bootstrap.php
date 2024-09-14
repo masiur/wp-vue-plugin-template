@@ -22,9 +22,13 @@ class Bootstrap {
         // Hook for adding the admin menu
         add_action('admin_menu', [$this->admin_menu, 'add_menu']);
 
-        // Register the AJAX action
-        add_action('wp_ajax_handle_ai_request', [AIHandler::class, 'handle_request']);
-        add_action('wp_ajax_nopriv_handle_ai_request', [AIHandler::class, 'handle_request']);
+//        // Register the AJAX action
+//        add_action('wp_ajax_handle_ai_request', [AIHandler::class, 'handle_request']);
+//        add_action('wp_ajax_nopriv_handle_ai_request', [AIHandler::class, 'handle_request']);
+
+        // for Open AI
+        add_action('wp_ajax_handle_openai', [AIHandler::class, 'openAiChat']);
+        add_action('wp_ajax_nopriv_handle_openai', [AIHandler::class, 'openAiChat']);
 
         // Hook for enqueueing scripts
         add_action('admin_enqueue_scripts', [$this->enqueue_scripts, 'enqueue']);
