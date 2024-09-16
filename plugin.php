@@ -71,3 +71,4 @@ $dotenv->load();
 
 // Initialize the plugin by instantiating the Bootstrap class
 new WPVuePlugin\Bootstrap();
+

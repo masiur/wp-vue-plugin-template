@@ -110,7 +110,7 @@ class AIHandler {
         $open_ai = new OpenAi($open_ai_key);
 
         $chat = $open_ai->chat([
-            'model' => 'gpt-3.5-turbo',
+            'model' => 'gpt-4o',
             'messages' => [
                 [
                     "role" => "user",

@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import hljs from 'highlight.js'
+
 export default {
     name: 'OpenAIView',
     data() {
@@ -95,22 +97,24 @@ export default {
         formatAIResponse(content) {
             let formattedContent = content;
 
-            // Replace code blocks (```...```) with <pre><code> tags
-            formattedContent = formattedContent.replace(/```([\s\S]*?)```/g, '<pre><code class="code-block">$1</code></pre>');
+            // Dynamically replace code blocks with <pre><code> tags and retain language identifiers
+            formattedContent = formattedContent.replace(/```(\w+)([\s\S]*?)```/g, '<pre><span>$1</span><code class="language-$1">$2</code></pre>');
 
-            // Replace headings (##) with <h2> tags
+            // Replace other elements as needed
             formattedContent = formattedContent.replace(/## (.+)/g, '<h2>$1</h2>');
-
-            // Replace bold text (**) with <strong> tags
             formattedContent = formattedContent.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-            // Replace bullet points (*) with <li> tags, wrapped in <ul>
             formattedContent = formattedContent.replace(/\n\* (.+)/g, '<ul><li>$1</li></ul>');
-
-            // Replace line breaks (\n) with <br> tags
-            formattedContent = formattedContent.replace(/\n/g, '<br>');
+            // formattedContent = formattedContent.replace(/\n/g, '<br>');
 
             return formattedContent;
+        },
+
+        // Apply syntax highlighting to all code blocks
+        highlightCodeBlocks() {
+            const blocks = document.querySelectorAll('pre code');
+            blocks.forEach((block) => {
+                hljs.highlightElement(block);
+            });
         },
 
         // Auto-scroll to the bottom of the chat box
@@ -124,11 +128,13 @@ export default {
     mounted() {
         // Auto-scroll to bottom when the component is mounted
         this.scrollToBottom();
+        this.highlightCodeBlocks(); // Highlight code blocks on initial load
     },
     updated() {
         // Ensure auto-scroll on every update
         this.scrollToBottom();
-    }
+        this.highlightCodeBlocks(); // Highlight code blocks after each update
+    },
 };
 </script>
 

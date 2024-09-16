@@ -11,7 +11,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "highlight.js": "^11.10.0",
     "pinia": "^2.1.7",
+    "prismjs": "^1.29.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },

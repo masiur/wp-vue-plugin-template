@@ -94,8 +94,11 @@ export default {
         formatAIResponse(content) {
             let formattedContent = content;
 
-            // Replace code blocks (```...```) with <pre><code> tags
-            formattedContent = formattedContent.replace(/```([\s\S]*?)```/g, '<pre><code class="code-block">$1</code></pre>');
+            // Replace code blocks (```...```) with <pre><code> tags and add language classes
+            formattedContent = formattedContent.replace(/```php([\s\S]*?)```/g, '<pre><code class="language-php">$1</code></pre>');
+            formattedContent = formattedContent.replace(/```js([\s\S]*?)```/g, '<pre><code class="language-javascript">$1</code></pre>');
+            formattedContent = formattedContent.replace(/```bash([\s\S]*?)```/g, '<pre><code class="language-bash">$1</code></pre>');
+            // Add more replacements for other languages as needed...
 
             // Replace headings (##) with <h2> tags
             formattedContent = formattedContent.replace(/## (.+)/g, '<h2>$1</h2>');
