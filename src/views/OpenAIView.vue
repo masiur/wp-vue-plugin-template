@@ -2,11 +2,24 @@
     <div class="chat-container">
         <h1>OpenAI Chat Interface</h1>
 
+        <!-- Model Selection Dropdown -->
+        <div class="model-selection">
+            <label for="model-select">Choose a model:</label>
+            <select id="model-select" v-model="selectedModel">
+                <option v-for="(description, key) in models" :key="key" :value="key">
+                    {{ description }}
+                </option>
+            </select>
+        </div>
+
         <div class="chat-box" ref="chatBox">
             <!-- Display messages -->
-            <div v-for="message in messages" :key="message.id" class="message">
+            <div v-for="message in messages" :key="message.id" :class="['message', message.role]">
                 <div :class="['message-content', message.role]">
-                    <strong>{{ message.role === 'user' ? 'You' : 'AI' }}:</strong>
+                    <strong>
+                        <!-- Show AI with the model used for that response -->
+                        {{ message.role === 'user' ? 'You' : `AI (${message.model.toUpperCase()})` }}:
+                    </strong>
                     <!-- Render message content as HTML if it is from AI -->
                     <div v-if="message.role === 'ai'" v-html="formatAIResponse(message.content)"></div>
                     <!-- Render message content as plain text if it is from the user -->
@@ -28,6 +41,8 @@
     </div>
 </template>
 
+
+
 <script>
 import hljs from 'highlight.js'
 
@@ -37,6 +52,16 @@ export default {
         return {
             userInput: '', // User input from the form
             messages: JSON.parse(localStorage.getItem('openai_chat')) || [], // Load messages from localStorage or initialize an empty array
+            models: {
+                'gpt-4o': 'GPT-4o: Our high-intelligence flagship model for complex, multi-step tasks',
+                'gpt-4o-mini': 'GPT-4o mini: Affordable and intelligent small model for fast, lightweight tasks',
+                'o1-preview': 'o1-preview: Language model for complex reasoning (preview)',
+                'o1-mini': 'o1-mini: Language model for complex reasoning (mini)',
+                'gpt-4-turbo': 'GPT-4 Turbo: Previous high-intelligence model (turbo)',
+                'gpt-4': 'GPT-4: Previous high-intelligence model',
+                'gpt-3.5-turbo': 'GPT-3.5 Turbo: Fast, inexpensive model for simple tasks',
+            },
+            selectedModel: 'gpt-4o-mini', // Default selected model
         };
     },
     methods: {
@@ -57,7 +82,8 @@ export default {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({
                         action: 'handle_openai',  // Action name for WordPress AJAX
-                        message: this.userInput
+                        message: this.userInput,
+                        model: this.selectedModel, // Send the selected model to the backend
                     })
                 });
 
@@ -75,7 +101,7 @@ export default {
                 const aiResponse = data.choices[0]?.message?.content || 'No response from AI';
 
                 // Add the AI's response to the messages array
-                this.messages.push({ id: Date.now() + 1, role: 'ai', content: aiResponse });
+                this.messages.push({ id: Date.now() + 1, role: 'ai', content: aiResponse, model: this.selectedModel });
 
                 // Save messages to localStorage
                 this.saveMessagesToLocalStorage();
@@ -83,6 +109,8 @@ export default {
 
                 // Auto-scroll to the bottom of the chat
                 this.scrollToBottom();
+
+
             } catch (error) {
                 console.error('Error communicating with AI server:', error);
             }
@@ -139,7 +167,6 @@ export default {
 </script>
 
 <style scoped>
-
 .chat-container {
     max-width: 800px; /* Increase the width for better layout */
     margin: 0 auto;
@@ -164,6 +191,15 @@ export default {
 
 .message {
     margin-bottom: 10px;
+    display: flex;
+}
+
+.message.user {
+    justify-content: flex-end; /* Align user messages to the right */
+}
+
+.message.ai {
+    justify-content: flex-start; /* Align AI messages to the left */
 }
 
 .message-content {
@@ -172,18 +208,21 @@ export default {
     margin-bottom: 5px;
     font-size: 14px;
     line-height: 1.5;
+    max-width: 98%; /* Limit the width for better readability */
 }
 
 .message-content.user {
     background-color: #d1e7dd;
     text-align: left;
     border-left: 4px solid #007bff;
+    align-self: flex-end; /* Align to the right */
 }
 
 .message-content.ai {
     background-color: #e2e3e5;
     text-align: left;
     border-left: 4px solid #6c757d;
+    align-self: flex-start; /* Align to the left */
 }
 
 .message-content h2 {
@@ -252,6 +291,23 @@ export default {
 .chat-form button:hover {
     background-color: #0056b3;
 }
+
+.model-selection {
+    margin-bottom: 20px;
+}
+
+.model-selection label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.model-selection select {
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
 
 </style>
 

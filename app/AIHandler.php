@@ -101,16 +101,21 @@ class AIHandler {
 
     public static function openAiChat()
     {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['message'])) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['message'])) {
             return;
         }
-        $user_message = sanitize_text_field($_POST['message']);
 
+        // Sanitize and retrieve the user message and selected model
+        $user_message = sanitize_text_field($_POST['message']);
+        $selected_model = isset($_POST['model']) ? sanitize_text_field($_POST['model']) : 'gpt-4o'; // Default to 'gpt-4o' if not provided
+
+        // Get the OpenAI API key from environment variables
         $open_ai_key = $_ENV['OPENAI_API_KEY'];
         $open_ai = new OpenAi($open_ai_key);
 
+        // Make the OpenAI API request using the selected model
         $chat = $open_ai->chat([
-            'model' => 'gpt-4o',
+            'model' => $selected_model, // Use the dynamically selected model
             'messages' => [
                 [
                     "role" => "user",
@@ -123,9 +128,10 @@ class AIHandler {
             'presence_penalty' => 0,
         ]);
 
+        // Set the content type to JSON and output the response
         header('Content-Type: application/json');
         echo $chat;
         exit;
-
     }
+
 }
