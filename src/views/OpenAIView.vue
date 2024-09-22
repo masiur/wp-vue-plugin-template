@@ -120,21 +120,87 @@ export default {
         saveMessagesToLocalStorage() {
             localStorage.setItem('openai_chat', JSON.stringify(this.messages));
         },
-
-        // Format the AI response content as HTML for better readability
         formatAIResponse(content) {
             let formattedContent = content;
 
-            // Dynamically replace code blocks with <pre><code> tags and retain language identifiers
-            formattedContent = formattedContent.replace(/```(\w+)([\s\S]*?)```/g, '<pre><span>$1</span><code class="language-$1">$2</code></pre>');
+            // Step 1: Temporarily replace code blocks with placeholders
+            let codeBlocks = [];
+            formattedContent = formattedContent.replace(/```(\w+)([\s\S]*?)```/g, (match, lang, code) => {
+                // Directly pass the code content without escaping HTML entities
+                const randomId = Date.now() + Math.random().toString(36).substring(2, 9);
+                codeBlocks.push(`
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-language">${lang}</span>
+                    <button class="copy-button" data-id="${randomId}">Copy</button>
+                </div>
+                <pre id="${randomId}"><code class="language-${lang}">${code}</code></pre>
+            </div>
+        `);
+                return `__CODE_BLOCK_${codeBlocks.length - 1}__`; // Placeholder for code blocks
+            });
 
-            // Replace other elements as needed
-            formattedContent = formattedContent.replace(/## (.+)/g, '<h2>$1</h2>');
-            formattedContent = formattedContent.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            formattedContent = formattedContent.replace(/\n\* (.+)/g, '<ul><li>$1</li></ul>');
-            // formattedContent = formattedContent.replace(/\n/g, '<br>');
+            // Step 2: Replace other elements in non-code parts
+            formattedContent = formattedContent.replace(/## (.+)/g, '<h2>$1</h2>');  // Headings
+            formattedContent = formattedContent.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');  // Bold text
+            formattedContent = formattedContent.replace(/\n\* (.+)/g, '<ul><li>$1</li></ul>');  // Lists
+
+            // Step 3: Apply newline to <br> for non-code parts only
+            formattedContent = formattedContent.replace(/\n/g, '<br>');
+
+            // Step 4: Reinsert code blocks in place of placeholders
+            codeBlocks.forEach((codeBlock, index) => {
+                formattedContent = formattedContent.replace(`__CODE_BLOCK_${index}__`, codeBlock);
+            });
 
             return formattedContent;
+        },
+
+
+
+        copyCode(codeBlockId) {
+            // this.$nextTick(() => {
+                // Use the passed ID to find the specific code block
+                const codeElement = document.getElementById(codeBlockId).querySelector('code');
+
+                if (codeElement) {
+                    // Create a temporary textarea to hold the code content
+                    const tempTextarea = document.createElement('textarea');
+                    tempTextarea.value = codeElement.textContent;
+
+                    // Append the textarea to the body
+                    document.body.appendChild(tempTextarea);
+
+                    // Select the textarea content
+                    tempTextarea.select();
+                    tempTextarea.setSelectionRange(0, tempTextarea.value.length); // For mobile devices
+
+                    try {
+                        // Attempt to copy the content to the clipboard
+                        const successful = document.execCommand('copy');
+                        const msg = successful ? 'Code copied to clipboard!' : 'Failed to copy code!';
+                        alert(msg);
+                    } catch (err) {
+                        console.error('Failed to copy text:', err);
+                    }
+
+                    // Remove the textarea after copying
+                    document.body.removeChild(tempTextarea);
+                } else {
+                    console.error('Code block not found for copying.');
+                }
+            // });
+        },
+        //
+        attachCopyListeners() {
+            // Find all copy buttons
+            const buttons = document.querySelectorAll('.copy-button');
+            buttons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const index = button.getAttribute('data-id');
+                    this.copyCode(index);  // Call the copyCode method with the index
+                });
+            });
         },
 
         // Apply syntax highlighting to all code blocks
@@ -156,12 +222,20 @@ export default {
     mounted() {
         // Auto-scroll to bottom when the component is mounted
         this.scrollToBottom();
-        this.highlightCodeBlocks(); // Highlight code blocks on initial load
+        this.$nextTick(() => {
+            this.highlightCodeBlocks(); // Apply highlighting after content updates
+            this.attachCopyListeners(); // Attach copy listeners after updates
+        });
+
     },
     updated() {
         // Ensure auto-scroll on every update
         this.scrollToBottom();
-        this.highlightCodeBlocks(); // Highlight code blocks after each update
+        // Highlight code blocks after the content is updated
+        this.$nextTick(() => {
+            this.highlightCodeBlocks();
+        });
+        this.attachCopyListeners();  // Reattach listeners after updates
     },
 };
 </script>
@@ -314,24 +388,49 @@ export default {
 <style>
 
 
-/* Enhanced Code Block Styling */
 .code-block {
     display: flex;
-    background-color: #2d2d2d; /* Dark background for better contrast */
-    color: #f8f8f2; /* Light text color for readability */
-    padding: 5px; /* Increased padding for more space around code */
-    border-radius: 6px; /* Rounded corners for a modern look */
-    overflow-x: auto; /* Enable horizontal scrolling for long lines */
-    font-family: 'Fira Code', 'Courier New', Courier, monospace; /* Monospaced font for code */
-    font-size: 13px; /* Slightly smaller font size for code */
-    border: 1px solid #444; /* Subtle border to define the code area */
-    line-height: 1.5; /* Improved line height for better readability */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-    white-space: pre-wrap; /* Preserve whitespace and wrap text properly */
+    flex-direction: column;
+    background-color: #2d2d2d;
     margin-top: 10px;
     margin-bottom: 10px;
-    max-width: 100%; /* Prevent overflow */
+    border: 1px solid #444;
+    border-radius: 6px;
+    overflow: hidden; /* Prevents overflow for long code lines */
 }
 
+.code-header {
+    position: relative;
+    display: flex;
+    background-color: #444;
+    padding: 8px;
+    color: #f8f8f2;
+    font-family: 'Arial', sans-serif;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.code-language {
+    font-weight: bold;
+    color: #ddd; /* Slightly lighter gray for the language name */
+    font-size: 12px;
+}
+
+.copy-button {
+    background-color: #007bff; /* Blue button background */
+    color: white;
+    border: none;
+    padding: 5px 10px; /* Adds some padding for a clickable area */
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+.copy-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
 
 </style>

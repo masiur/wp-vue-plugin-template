@@ -254,24 +254,24 @@ export default {
 <style>
 
 
-/* Enhanced Code Block Styling */
-.code-block {
-    display: flex;
-    background-color: #2d2d2d; /* Dark background for better contrast */
-    color: #f8f8f2; /* Light text color for readability */
-    padding: 5px; /* Increased padding for more space around code */
-    border-radius: 6px; /* Rounded corners for a modern look */
-    overflow-x: auto; /* Enable horizontal scrolling for long lines */
-    font-family: 'Fira Code', 'Courier New', Courier, monospace; /* Monospaced font for code */
-    font-size: 13px; /* Slightly smaller font size for code */
-    border: 1px solid #444; /* Subtle border to define the code area */
-    line-height: 1.5; /* Improved line height for better readability */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
-    white-space: pre-wrap; /* Preserve whitespace and wrap text properly */
-    margin-top: 10px;
-    margin-bottom: 10px;
-    max-width: 100%; /* Prevent overflow */
-}
+/*!*!* Enhanced Code Block Styling *!*!*/
+/*.code-block {*/
+/*    display: flex;*/
+/*    background-color: #2d2d2d; !* Dark background for better contrast *!*/
+/*    color: #f8f8f2; !* Light text color for readability *!*/
+/*    padding: 5px; !* Increased padding for more space around code *!*/
+/*    border-radius: 6px; !* Rounded corners for a modern look *!*/
+/*    overflow-x: auto; !* Enable horizontal scrolling for long lines *!*/
+/*    font-family: 'Fira Code', 'Courier New', Courier, monospace; !* Monospaced font for code *!*/
+/*    font-size: 13px; !* Slightly smaller font size for code *!*/
+/*    border: 1px solid #444; !* Subtle border to define the code area *!*/
+/*    line-height: 1.5; !* Improved line height for better readability *!*/
+/*    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); !* Light shadow for depth *!*/
+/*    white-space: pre-wrap; !* Preserve whitespace and wrap text properly *!*/
+/*    margin-top: 10px;*/
+/*    margin-bottom: 10px;*/
+/*    max-width: 100%; !* Prevent overflow *!*/
+/*}*/
 
 
 </style>
